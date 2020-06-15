@@ -19,6 +19,8 @@ else
 
 	mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 
+	awk '/\[mysqld\]/ {$0=$0"\nskip-log-bin"}1' /etc/my.cnf.d/mariadb-server.cnf > tmp.cnf && mv tmp.cnf /etc/my.cnf.d/mariadb-server.cnf
+
 	if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
 		MYSQL_ROOT_PASSWORD=`pwgen 16 1`
 		echo "[i] MySQL root Password: $MYSQL_ROOT_PASSWORD"
@@ -53,13 +55,13 @@ EOF
 	    fi
 	fi
 
-	/usr/bin/mysqld --user=mysql --bootstrap --verbose=0 --skip-name-resolve --skip-networking=0 < $tfile
+	/usr/bin/mysqld --user=mysql --bootstrap --verbose=0 --skip-name-resolve --skip-networking=0 --skip-log-bin < $tfile
 	rm -f $tfile
-
+	
 	echo
 	echo 'MySQL init process done. Ready for start up.'
 	echo
-	echo "exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0" "$@"
+	echo "exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 --skip-log-bin" "$@"
 fi
 
-exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 $@
+exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 --skip-log-bin $@
