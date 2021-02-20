@@ -1,8 +1,8 @@
-FROM alpine:3.12.0
+FROM alpine:3.13.2
 
 LABEL architecture="amd64/x86_64" \
-    alpine-version="3.12.0" \
-    mariadb-version="10.4.13"
+    alpine-version="3.13.2" \
+    mariadb-version="10.5.8"
 
 RUN apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen && \
     rm -f /var/cache/apk/*
